@@ -17,6 +17,9 @@ def prod(x: "Tensor", y: Union[int, float, "Tensor", np.ndarray, list]) -> "Tens
     else:
         return NumProd(y)(x)
 
+def matvecmul(x: "Tensor", y: "Tensor") -> "Tensor":
+    return MatrixVecMul()(x, y)
+
 def inv(x: "Tensor") -> "Tensor":
     return TensorInv()(x)
 

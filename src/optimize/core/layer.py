@@ -137,6 +137,47 @@ class TensorProd(Layer):
         x.backward(x_grad)
         y.backward(y_grad)
 
+class MatrixVecMul(Layer):
+    def __init__(self):
+        super().__init__()
+        self.desc = 'optimize.Layer.MatrixVecMul'
+    
+    def forward(self, A: Tensor, x: Tensor) -> Tensor:
+        '''
+        Perform matrix-vector multiplication: y = Ax
+        
+        Parameters
+        ----------
+        A : Tensor (n x m)
+        x : Tensor (m x 1)
+        
+        Returns
+        -------
+        A new Tensor object with updated values and corresponding gradients after multiplication
+        '''
+        assert A.shape[1] == x.shape[0]
+        
+        y_data = A.data @ x.data  # Matrix-vector multiplication
+        
+        if self.mode == Mode.FORWARD:
+            y_grad = A.grad @ x.data + A.data @ x.grad
+            y = Tensor(y_data, y_grad)
+        elif self.mode == Mode.BACKWARD:
+            y = Tensor(y_data)
+            y.dependency = [A, x]
+            y.layer = self
+        return y
+    
+    def backward(self, A, x, g):
+        '''
+        Compute gradients for matrix A and vector x during backpropagation.
+        '''
+        A_grad = g @ x.data.T  # Gradient w.r.t A
+        x_grad = A.data.T @ g  # Gradient w.r.t x
+        
+        A.backward(A_grad)
+        x.backward(x_grad)
+
 class TensorInv(Layer):
     def __init__(self):
         super().__init__()

@@ -51,12 +51,12 @@ class Tensor():
         self.mode = AutoDiffMode.get_mode()
 
         if self.mode == Mode.BACKWARD:
-            grad = np.zeros_like(self.data)
+            grad = np.zeros_like(self.data, dtype=np.float64)
         elif grad is None:
-            grad = np.ones_like(self.data)
+            grad = np.ones_like(self.data, dtype=np.float64)
         self.grad = grad
         if seed is not None:
-            self.grad = np.dot(grad, seed)
+            self.grad = np.dot(grad, seed, dtype=np.float64)
 
     def backward(self, g=None):
         '''
