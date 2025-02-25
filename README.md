@@ -42,9 +42,10 @@ array([-1.96093086,  0.        ])
 For reverse mode, the construction of the tensors are the same. The difference is that the gradient won't be accumulated until the `Tensor.backward()` method is called.
 
 ```python
->>> from optimize import Tensor
+>>> from optimize import Tensor, Mode, set_mode
 >>> import optimize.core.functional as F
->>> x = tensor([[1, 2], [3, 4]])
+>>> set_mode(Mode.BACKWARD)
+>>> x = Tensor([[1, 2], [3, 4]])
 >>> y = F.cos(3 * (x ** 2) + 4 * x + 1)
 >>> z = y.mean()
 >>> z
@@ -65,7 +66,7 @@ With backwards auto-diff, you can utilize the backwards accumulation of gradient
 
 ```python
 import numpy as np
-from optimize import Tensor
+from optimize import Tensor. Mode, set_mode
 from optimize.core.module import Module, BCELoss
 from optimize.utils.optimizer import SGD
 
@@ -84,6 +85,7 @@ class LinearModel(Module):
 
 Then utilize the SGD optimizer and a loss function to train the model.
 ```python
+set_mode(Mode.BACKWARD)
 model = MyModel()
 np.random.seed(42)
 x = Tensor([1, 2, 3, 4])

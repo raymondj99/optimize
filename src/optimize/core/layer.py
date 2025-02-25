@@ -59,6 +59,13 @@ class Power(Layer):
             y.layer = self
         return y
 
+    def backward(self, x, g):
+        '''
+        backward function keeps track of the calculated gradient of the Tensor object after taking the power
+        '''
+        grad = self.p * np.power(x.data.copy(), self.p - 1) * g
+        x.backward(grad)
+
 class TensorSum(Layer):
     def __init__(self):
         super().__init__()
@@ -862,7 +869,7 @@ class Sum(Layer):
 class Repeat(Layer):
     def __init__(self):
         super().__init__()
-        self.desc = 'spladtool_reverse.Layer.Repeat'
+        self.desc = 'optimize.Layer.Repeat'
 
     def forward(self, x: Tensor, times: int):
         '''
